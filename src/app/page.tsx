@@ -1,10 +1,13 @@
 import Image from "next/image";
 import styles from "./page.module.css";
+import { Button } from "antd";
 
 export default function Home() {
   return (
     <main className={styles.main}>
       <div className={styles.description}>
+        <Button type="primary">Primary Button</Button>
+        <Image src={`/assets/logo.png`} alt={"Logo"} width="64" height="64" />
         <p>
           Get started by editing&nbsp;
           <code className={styles.code}>src/app/page.tsx</code>
