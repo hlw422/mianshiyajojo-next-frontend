@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import {
   CaretDownFilled,
   DoubleRightOutlined,
@@ -27,6 +27,9 @@ import {
   theme,
 } from "antd";
 import React, { useState } from "react";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 const SearchInput = () => {
   const { token } = theme.useToken();
@@ -51,14 +54,8 @@ const SearchInput = () => {
           backgroundColor: token.colorBgTextHover,
         }}
         prefix={<SearchOutlined />}
-        placeholder="搜索方案"
+        placeholder="搜索题目"
         variant="borderless"
-      />
-      <PlusCircleFilled
-        style={{
-          color: token.colorPrimary,
-          fontSize: 24,
-        }}
       />
     </div>
   );
@@ -69,17 +66,7 @@ interface Props {
 }
 
 export default function BasicLayout({ children }: Props) {
-  const [settings, setSetting] = useState<Partial<ProSettings> | undefined>({
-    fixSiderbar: true,
-    layout: "mix",
-    splitMenus: true,
-  });
-
-  const [pathname, setPathname] = useState("/list/sub-page/sub-sub-page1");
-  const [num, setNum] = useState(40);
-  if (typeof document === "undefined") {
-    return <div />;
-  }
+  const pathname = usePathname(); //高亮
   return (
     <div
       id="basic-pro-layout"
@@ -89,13 +76,23 @@ export default function BasicLayout({ children }: Props) {
       }}
     >
       <ProLayout
+        layout="top"
+        title="面试狗刷题平台"
+        logo={
+          <Image
+            src="/assets/logo.png"
+            alt="logo"
+            width={32}
+            height={32}
+          ></Image>
+        }
         location={{
           pathname,
         }}
         avatarProps={{
           src: "https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg",
           size: "small",
-          title: "七妮妮",
+          title: "鸣人",
           render: (props, dom) => {
             return (
               <Dropdown
@@ -116,14 +113,11 @@ export default function BasicLayout({ children }: Props) {
         }}
         actionsRender={(props) => {
           if (props.isMobile) return [];
-          if (typeof window === "undefined") return [];
           return [
-            props.layout !== "side" && document.body.clientWidth > 1400 ? (
-              <SearchInput />
-            ) : undefined,
-            <InfoCircleFilled key="InfoCircleFilled" />,
-            <QuestionCircleFilled key="QuestionCircleFilled" />,
-            <GithubFilled key="GithubFilled" />,
+            <SearchInput key="SearchInput" />,
+            <a key="github" href="https://github.com/hlw422" target="_blank">
+              <GithubFilled key="GithubFilled" />,
+            </a>,
           ];
         }}
         headerTitleRender={(logo, title, _) => {
@@ -155,16 +149,23 @@ export default function BasicLayout({ children }: Props) {
           );
         }}
         onMenuHeaderClick={(e) => console.log(e)}
-        menuItemRender={(item, dom) => (
-          <div
-            onClick={() => {
-              setPathname(item.path || "/welcome");
-            }}
-          >
-            {dom}
-          </div>
+        menuDataRender={(e) => {
+          return [
+            {
+              path: "/question",
+              name: "题目",
+            },
+            {
+              path: "/questionBank",
+              name: "题库",
+            },
+          ];
+        }}
+        menuItemRender={(menuItemProps, defaultDom) => (
+          <Link href={menuItemProps.path || "/"} target={menuItemProps.target}>
+            {defaultDom}
+          </Link>
         )}
-        {...settings}
       >
         {children}
       </ProLayout>
